@@ -138,6 +138,7 @@ npm install
 
 ## Setup
 1. Download repository
+2. Rename `example.config.json` to `config.json`
 2. Fill `config.json`
 
 ```ts

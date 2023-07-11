@@ -35,7 +35,12 @@ export function config () {
   } catch (e) {
     if (e.errno === -4058) console.warn('[CRASH] Config is required for Discord bot! Create config.json file.'.red)
     else console.warn(('[CRASH] ' + e.message + ' ' + (e.name ? e.name : '') + ' ' + (e.path ? e.path : '')).red)
-    process.exit(1)
+    config = {
+      TOKEN: process.env.CLIENT_TOKEN,
+      logging: false,
+      webServer: false,
+      prefix: '!'
+    }
   }
   return config
 }
