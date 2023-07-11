@@ -62,8 +62,8 @@ async function loadCommands (client) {
       }
     })
 
-    if (module.structure.aliases.length > 0 && !module.structure.type.includes(0)) log('If you want to use aliases in ' + name + ', you have to set the type as prefix.', 'warning')
-    if (module.structure.customIDs.length > 0 && !module.structure.type.includes(4)) log('If you want to use customIDs in ' + name + ', you have to set the type as component.', 'warning')
+    if (module.structure.aliases.length > 0 && !module.structure.type.includes(0)) log('If you want to use aliases in ' + name + ', you have to set the type as prefix.', 'warn')
+    if (module.structure.customIDs.length > 0 && !module.structure.type.includes(4)) log('If you want to use customIDs in ' + name + ', you have to set the type as component.', 'warn')
   }
   log('Commands loaded successfully', 'done')
 };

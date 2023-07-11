@@ -47,7 +47,7 @@ export async function executeMessage (client, interaction) {
 
 }
 
-export async function executeButton (client, interaction, args) {
+export async function executeButton (client, interaction, customID, args) {
   if (args === 'expand') {
     const row = new DiscordJS.ActionRowBuilder()
       .addComponents(
@@ -84,10 +84,10 @@ export async function executeButton (client, interaction, args) {
   }
 };
 
-export async function executeMenu (client, interaction, args) {
+export async function executeMenu (client, interaction, customID, args) {
 
 };
 
-export async function executeModal (client, interaction, args) {
+export async function executeModal (client, interaction, customID, args) {
 
 }

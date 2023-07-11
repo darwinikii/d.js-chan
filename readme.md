@@ -43,6 +43,8 @@ export const structure = {
 ```ts
 args<Prefix>: [string] // Arguments for command
 args<Button, Menu, Modal>: string // The data attached to custom id using CustomIDBuilder
+target: Member or Message object // The target of context command
+customID: string //custom ID of component
 
 export async function executePrefix (client, message, args) {
 
@@ -52,23 +54,23 @@ export async function executeSlash (client, interaction) {
 
 }
 
-export async function executeUser (client, interaction) {
+export async function executeUser (client, interaction, target) {
 
 }
 
-export async function executeMessage (client, interaction) {
+export async function executeMessage (client, interaction, target) {
 
 }
 
-export async function executeButton (client, interaction, args) {
+export async function executeButton (client, interaction, customID, args) {
   
 };
 
-export async function executeMenu (client, interaction, args) {
+export async function executeMenu (client, interaction, customID, args) {
 
 };
 
-export async function executeModal (client, interaction, args) {
+export async function executeModal (client, interaction, customID, args) {
 
 }
 ```
