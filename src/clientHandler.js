@@ -45,10 +45,12 @@ async function loadCommands (client) {
         client.interactionCommands.cache.push(module.structure.data)
         log('Loaded new interaction command: ' + module.structure.data.name, 'info')
       } else if (e === 2) {
+        module.structure.user.type = 2
         client.interactionCommands.list.set(module.structure.user.name, module)
         client.interactionCommands.cache.push(module.structure.user)
         log('Loaded new user command: ' + module.structure.user.name, 'info')
       } else if (e === 3) {
+        module.structure.user.type = 3
         client.interactionCommands.list.set(module.structure.message.name, module)
         client.interactionCommands.cache.push(module.structure.message)
         log('Loaded new message command: ' + module.structure.message.name, 'info')

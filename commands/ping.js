@@ -9,11 +9,9 @@ export const structure = {
     .setName('ping')
     .setDescription('Pong🏓'),
   user: new DiscordJS.ContextMenuCommandBuilder()
-    .setName('ping')
-    .setType(2),
+    .setName('ping'),
   message: new DiscordJS.ContextMenuCommandBuilder()
-    .setName('ping')
-    .setType(3),
+    .setName('ping'),
   type: [0, 1, 4], // "0 is Prefix, 1 is Slash, 2 is User, 3 is Message, 4 is Component"
   aliases: [],
   customIDs: ['ping']
