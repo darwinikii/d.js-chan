@@ -31,7 +31,9 @@ export function run (client, interaction) {
     command.executeButton(
       client,
       interaction,
-      interaction.customId.split('@*@')[1]
+      interaction.customId.includes('@*@')
+        ? interaction.customId.split('@*@')[1]
+        : undefined
     )
   } else if (interaction.isAnySelectMenu()) {
     command.executeMenu(
