@@ -1,91 +1,112 @@
 import DiscordJS from 'discord.js'
-import moment from 'moment'
-import 'moment-duration-format'
+import colors from 'colors'
+import path from 'path'
+import fs from 'fs'
 
-import CustomIDBuilder from '../src/class/CustomIDBuilder.js'
+import { log } from './functions.js'
 
-export const structure = {
-  data: new DiscordJS.SlashCommandBuilder()
-    .setName('example')
-    .setDescription('Example Command'),
-  user: new DiscordJS.ContextMenuCommandBuilder()
-    .setName('example')
-    .setType(2),
-  message: new DiscordJS.ContextMenuCommandBuilder()
-    .setName('example')
-    .setType(3),
-  type: [0, 1, 2, 3, 4], // "0 is Prefix, 1 is Slash, 2 is User, 3 is Message, 4 is Component"
-  aliases: ['exampleAlias', 'newExampleAlias'],
-  customIDs: ['exampleButton', 'exampleMenu', 'exampleModal']
+export default async (client, token) => {
+  try {
+    if (client.handledBefore === false) {
+      await loadCommands(client)
+      await loadEvents(client)
+    }
+    log('Client connecting to Discord', 'info')
+    await client.login(token)
+    await deployCommands(client)
+    client.handledBefore = true
+  } catch (err) {
+    if (err.code === 'HTTPError') {
+      log("Client couldn't connect to Discord", 'err')
+      process.exit(1)
+    } else {
+      log('Error while handling bot', 'err')
+      console.error(err)
+      process.exit(1)
+    }
+  }
 }
 
-export async function executePrefix (client, message, args) {
-  const row = new DiscordJS.ActionRowBuilder()
-    .addComponents(
-      new DiscordJS.ButtonBuilder()
-        .setCustomId(CustomIDBuilder('exampleButton', 'test'))
-        .setLabel('click me')
-        .setStyle(DiscordJS.ButtonStyle.Primary)
-    )
+async function loadCommands (client) {
+  log('Loading commands', 'info')
+  for (const command of fs.readdirSync('./commands')) {
+    const module = await import('../commands/' + command)
+    const name = module.structure.data.name || module.structure.user.name || module.structure.message.name
 
-  const row2 = new DiscordJS.ActionRowBuilder()
-    .addComponents(
-      new DiscordJS.UserSelectMenuBuilder()
-        .setCustomId(CustomIDBuilder('exampleMenu', 'userSelect'))
-        .setMaxValues(10)
-    )
+    module.structure.type.forEach(e => {
+      if (e === 0) {
+        client.prefixCommands.commands.set(module.structure.data.name, module)
+        module.structure.aliases.forEach(e => {
+          client.prefixCommands.aliases.set(e, module.structure.data.name)
+        })
+        log('Loaded new prefix command: ' + module.structure.data.name, 'info')
+      } else if (e === 1) {
+        client.interactionCommands.list.set(module.structure.data.name, module)
+        client.interactionCommands.cache.push(module.structure.data)
+        log('Loaded new interaction command: ' + module.structure.data.name, 'info')
+      } else if (e === 2) {
+        module.structure.user.type = 2
+        client.interactionCommands.list.set(module.structure.user.name, module)
+        client.interactionCommands.cache.push(module.structure.user)
+        log('Loaded new user command: ' + module.structure.user.name, 'info')
+      } else if (e === 3) {
+        module.structure.user.type = 3
+        client.interactionCommands.list.set(module.structure.message.name, module)
+        client.interactionCommands.cache.push(module.structure.message)
+        log('Loaded new message command: ' + module.structure.message.name, 'info')
+      } else if (e === 4) {
+        module.structure.customIDs.forEach(e => {
+          client.interactionCommands.customIDs.set(e, name)
+        })
+        log('Loaded new component command: ' + name, 'info')
+      }
+    })
 
-  await message.reply({ content: 'You run prefix example command', components: [row, row2] })
-}
-
-export async function executeSlash (client, interaction) {
-  const row = new DiscordJS.ActionRowBuilder()
-    .addComponents(
-      new DiscordJS.ButtonBuilder()
-        .setCustomId(CustomIDBuilder('exampleButton', 'test'))
-        .setLabel('click me')
-        .setStyle(DiscordJS.ButtonStyle.Primary)
-    )
-
-  const row2 = new DiscordJS.ActionRowBuilder()
-    .addComponents(
-      new DiscordJS.UserSelectMenuBuilder()
-        .setCustomId(CustomIDBuilder('exampleMenu', 'userSelect'))
-        .setMaxValues(10)
-    )
-
-  await interaction.reply({ content: 'You run slash example command', components: [row, row2] })
-}
-
-export async function executeUser (client, interaction) {
-  await interaction.reply({ content: 'You runned user context example command' })
-}
-
-export async function executeMessage (client, interaction) {
-  await interaction.reply({ content: 'You run message context example command' })
-}
-
-export async function executeButton (client, interaction, args) {
-  const modal = new DiscordJS.ModalBuilder()
-    .setCustomId(CustomIDBuilder('exampleModal', 'test'))
-    .setTitle('My Modal')
-
-  const hobbiesInput = new DiscordJS.TextInputBuilder()
-    .setCustomId('hobbiesInput')
-    .setLabel('you runned a button command how do you feel?')
-    .setStyle(DiscordJS.TextInputStyle.Paragraph)
-
-  const secondActionRow = new DiscordJS.ActionRowBuilder().addComponents(hobbiesInput)
-
-  modal.addComponents(secondActionRow)
-
-  await interaction.showModal(modal)
+    if (module.structure.aliases.length > 0 && !module.structure.type.includes(0)) log('If you want to use aliases in ' + name + ', you have to set the type as prefix.', 'warn')
+    if (module.structure.customIDs.length > 0 && !module.structure.type.includes(4)) log('If you want to use customIDs in ' + name + ', you have to set the type as component.', 'warn')
+  }
+  log('Commands loaded successfully', 'done')
 };
 
-export async function executeMenu (client, interaction, args) {
-  await interaction.reply({ content: 'You run menu example command' })
+async function loadEvents (client) {
+  log('Loading events', 'info')
+  for (const event of fs.readdirSync('./events')) {
+    const module = await import('../events/' + event)
+
+    if (module.structure.once) {
+      client.once(module.structure.event, (...args) => module.run(client, ...args))
+    } else {
+      client.on(module.structure.event, (...args) => module.run(client, ...args))
+    };
+
+    log('Loaded new event: ' + module.structure.event, 'info')
+  }
+  log('Events loaded successfully', 'done')
 };
 
-export async function executeModal (client, interaction, args) {
-  await interaction.reply({ content: 'You run modal example command' })
-}
+async function deployCommands (client) {
+  log('Deploying commands', 'info')
+  const commandsList = await client.application.commands.fetch()
+
+  let isDiff = false
+
+  if (commandsList.size !== client.interactionCommands.cache.length) {
+    isDiff = true
+  } else {
+    client.interactionCommands.cache.forEach(e => {
+      commandsList.every(command => {
+        if (e === command.name) {
+          isDiff = true
+        }
+        return command
+      })
+    })
+  }
+
+  if (isDiff === true) {
+    await client.application.commands.set(client.interactionCommands.cache)
+    log('Commands deployed successfully', 'done')
+  } else {
+    log('Commands already deployed', 'done')
+  }
+};

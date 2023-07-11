@@ -39,11 +39,11 @@ export async function executeSlash (client, interaction) {
   await interaction.reply({ content: 'Pong! 🏓', components: [row] })
 }
 
-export async function executeUser (client, interaction) {
+export async function executeUser (client, interaction, target) {
 
 }
 
-export async function executeMessage (client, interaction) {
+export async function executeMessage (client, interaction, target) {
 
 }
 
