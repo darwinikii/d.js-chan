@@ -15,11 +15,7 @@ export function run (client, interaction) {
       : interaction.customId)
   )
 
-  if (!command) {
-    console.log(interaction)
-    console.log(interaction.customId)
-    return
-  }
+  if (!command) return log('Someone tried to run a undefined command : ' + (interaction.commandName || interaction.customId), 'warning')
 
   if (interaction.isChatInputCommand()) {
     command.executeSlash(client, interaction)

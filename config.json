@@ -1,5 +1,6 @@
 {
     "TOKEN": "",
     "logging": true,
-    "webServer": true
+    "webServer": true,
+    "prefix": "!"
 }

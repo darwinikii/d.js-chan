@@ -4,17 +4,7 @@ import path from 'path'
 import fs from 'fs'
 
 import handle from '../clientHandler.js'
-import { log } from '../functions.js'
-
-let config
-try {
-  config = fs.readFileSync(path.join('./', 'config.json'), 'utf8')
-  config = config ? JSON.parse(config) : {}
-} catch (e) {
-  if (e.errno === -4058) console.warn('[CRASH] Config is required for Discord bot! Create config.json file.'.red)
-  else console.warn(('[CRASH] ' + e.message + ' ' + (e.name ? e.name : '') + ' ' + (e.path ? e.path : '')).red)
-  process.exit(1)
-}
+import { log, config } from '../functions.js'
 
 export default class extends DiscordJS.Client {
   interactionCommands = {
@@ -52,11 +42,11 @@ export default class extends DiscordJS.Client {
 
   start = async (token) => {
     log('Starting Discord Bot', 'info')
-    if (config.webServer === true) {
+    if (config().webServer === true) {
       const server = (await import('http')).createServer((req, res) => res.end('Ready.')).listen()
       log('Starting Web Server at http://localhost:' + server.address().port)
     }
-    await handle(this, token || config.TOKEN || process.env.CLIENT_TOKEN)
+    await handle(this, token || config().TOKEN || process.env.CLIENT_TOKEN)
   }
 
   stop = async () => {

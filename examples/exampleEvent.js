@@ -3,10 +3,10 @@ import DiscordJS from 'discord.js'
 import { log } from '../src/functions.js'
 
 export const structure = {
-  event: 'ready',
+  event: 'customEvent',
   once: false
 }
 
-export function run (client) {
-  log('Client successfully connected to Discord', 'done')
+export function run (client, m) {
+  log('Custom event is worked nice', 'done')
 }
