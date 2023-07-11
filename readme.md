@@ -115,6 +115,8 @@ export function run (client) {
       .setStyle(DiscordJS.ButtonStyle.Danger)
 ```
 
+> You can find more informative files in `./examples` folder
+
 ## Requirements
 ### Packages:
 - **colors** v^1.4.0
