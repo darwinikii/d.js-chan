@@ -1,23 +1,21 @@
 import DiscordJS from 'discord.js'
 
-import { log } from '../src/functions.js'
+import { Logger } from '../src/functions.js'
 
 export const structure = {
-  event: 'interactionCreate',
+  event: DiscordJS.Events.InteractionCreate,
   once: false
 }
 
 export function run (client, interaction) {
-  const command = client.interactionCommands.list.get(
+  const command = client.commands.interactionCommands.list.get(
     interaction.commandName ||
-    client.interactionCommands.customIDs.get(interaction.customId.includes('@*@')
+    client.commands.interactionCommands.customIDs.get(interaction.customId.includes('@*@')
       ? interaction.customId.split('@*@')[0]
       : interaction.customId)
   )
 
-  if (!command) return log('Someone tried to run a undefined command : ' + (interaction.commandName || interaction.customId), 'warn')
-
-  console.log(interaction)
+  if (!command) return Logger.warn('Someone tried to run a undefined command : ' + (interaction.commandName || interaction.customId))
 
   if (interaction.isChatInputCommand()) {
     command.executeSlash(client, interaction)

@@ -1,6 +1,6 @@
 {
   "name": "d.js-chan",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Discord.JS Command Handler and Bot Template for everyone!",
   "main": "index.js",
   "type": "module",
@@ -10,16 +10,18 @@
   "author": "darwinikii",
   "license": "ISC",
   "dependencies": {
-    "colors": "^1.4.0",
-    "discord.js": "^14.11.0",
-    "moment": "^2.29.4",
-    "moment-duration-format": "^2.3.2"
+    "better-sqlite3": "latest",
+    "colors": "latest",
+    "discord.js": "latest",
+    "moment": "latest",
+    "moment-duration-format": "latest",
+    "quick.db": "latest"
   },
   "devDependencies": {
-    "eslint": "^8.44.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.1",
-    "eslint-plugin-promise": "^6.1.1"
+    "eslint": "latest",
+    "eslint-config-standard": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-n": "latest",
+    "eslint-plugin-promise": "latest"
   }
 }

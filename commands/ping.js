@@ -48,7 +48,10 @@ export async function executeMessage (client, interaction, target) {
 }
 
 export async function executeButton (client, interaction, customID, args) {
+  console.log(client.handlers)
   if (args === 'expand') {
+    const { editedTimestamp } = await interaction.deferUpdate({ fetchReply: true })
+
     const row = new DiscordJS.ActionRowBuilder()
       .addComponents(
         new DiscordJS.ButtonBuilder()
@@ -56,11 +59,10 @@ export async function executeButton (client, interaction, customID, args) {
           .setLabel('Basic Mode')
           .setStyle(DiscordJS.ButtonStyle.Primary)
       )
-
     const embed = new DiscordJS.EmbedBuilder()
       .setTitle('Pong! 🏓')
       .addFields(
-        { name: 'Ping:', value: Math.abs(Date.now() - interaction.createdTimestamp) + 'ms', inline: true },
+        { name: 'R/R Ping:', value: Math.abs(editedTimestamp - interaction.createdTimestamp) + 'ms', inline: true }, //It calculates VERY REAL ping. Real than other bots ping. For example console.log causes 200ms latency
         { name: 'API Ping:', value: client.ws.ping === -1 ? 'N/A' : Math.round(client.ws.ping) + 'ms', inline: true },
         { name: 'Servers:', value: client.guilds.cache.size.toString(), inline: true },
         { name: 'Users:', value: client.users.cache.size.toString(), inline: true },
@@ -71,7 +73,7 @@ export async function executeButton (client, interaction, customID, args) {
       .setFooter({ text: interaction.member.user.username, iconURL: interaction.member.user.avatarURL() })
       .setTimestamp(Date.now())
 
-    interaction.update({ content: null, embeds: [embed], components: [row] })
+    interaction.editReply({ content: null, embeds: [embed], components: [row] })
   } else {
     const row = new DiscordJS.ActionRowBuilder()
       .addComponents(
@@ -82,11 +84,11 @@ export async function executeButton (client, interaction, customID, args) {
       )
     interaction.update({ content: 'Pong! 🏓', embeds: [], components: [row] })
   }
-};
+}
 
 export async function executeMenu (client, interaction, customID, args) {
 
-};
+}
 
 export async function executeModal (client, interaction, customID, args) {
 

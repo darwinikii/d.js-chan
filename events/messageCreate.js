@@ -1,9 +1,9 @@
 import DiscordJS from 'discord.js'
 
-import { log, config } from '../src/functions.js'
+import { Logger } from '../src/functions.js'
 
 export const structure = {
-  event: 'messageCreate',
+  event: DiscordJS.Events.MessageCreate,
   once: false
 }
 
@@ -11,7 +11,7 @@ export function run (client, message) {
   if (message.author.bot) return
   if (message.channel.type === DiscordJS.ChannelType.DM) return
 
-  const prefix = config().prefix || '!'
+  const prefix = client.options.prefix || '!'
 
   if (!message.content.startsWith(prefix)) return
 
@@ -21,8 +21,8 @@ export function run (client, message) {
 
   if (!commandInput.length) return
 
-  let command = client.prefixCommands.commands.get(commandInput)
-  if (!command) command = client.prefixCommands.commands.get(client.prefixCommands.aliases.get(commandInput))
+  let command = client.commands.prefixCommands.commands.get(commandInput)
+  if (!command) command = client.commands.prefixCommands.commands.get(client.prefixCommands.aliases.get(commandInput))
   if (!command) return
 
   command.executePrefix(client, message, args)

@@ -1,12 +1,12 @@
 import DiscordJS from 'discord.js'
 
-import { log } from '../src/functions.js'
+import { Logger } from '../src/functions.js'
 
 export const structure = {
-  event: 'ready',
+  event: DiscordJS.Events.ClientReady,
   once: false
 }
 
 export function run (client) {
-  log('Client successfully connected to Discord', 'done')
+  Logger.done('Client successfully connected to Discord')
 }
